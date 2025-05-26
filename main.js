@@ -91,18 +91,70 @@ class GameScene extends Phaser.Scene {
 
         // Configura o tooltip
         this.tooltip = this.add.text(0, 0, '', {
-            fontSize: '14px',
-            backgroundColor: '#000',
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '8px',
             color: '#fff',
             padding: { x: 5, y: 2 },
             resolution: 3, // Dobra a resolução do texto
-            stroke: '#000000',
-            strokeThickness: 4
         }).setDepth(100).setVisible(false);
         // Carrega o primeiro quarto (com pequeno delay para garantir inicialização)
         this.time.delayedCall(100, () => {
             this.roomManager.loadRoom(1);
         });
+
+        // Caixa de diálogo inferior
+        this.textBoxBackground = this.add.rectangle(0, sizes.height - 60, sizes.width, 60, 0x000000, 0.8)
+            .setOrigin(0, 0)
+            .setDepth(100)
+            .setVisible(false);
+
+        this.textBox = this.add.text(10, sizes.height - 55, '', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '8px',
+            resolution: 3,
+            color: '#ffffff',
+            wordWrap: { width: sizes.width - 20 }
+        })
+            .setDepth(101)
+            .setVisible(true);
+
+
+        // Botões na ESQUERDA
+        this.buttonOpen = this.add.text(10, sizes.height - 25, '[Abrir]', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '12px',
+            color: '#00ff00',
+            padding: { x: 6, y: 2 },
+            stroke: '#000000',
+            strokeThickness: 2,
+            align: 'center',
+            resolution: 2,
+        })
+            .setInteractive({ useHandCursor: true })
+            .on('pointerdown', () => {
+                this.loadCustomMap('caixaclara', 'caixaclara');
+                this.hideTextBox();
+            })
+            .setDepth(101)
+            .setVisible(false);
+
+        this.buttonClose = this.add.text(90, sizes.height - 25, '[Fechar]', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '12px',
+            color: '#ff0000',
+            padding: { x: 6, y: 2 },
+            stroke: '#000000',
+            strokeThickness: 2,
+            align: 'center',
+            resolution: 2,
+        })
+            .setInteractive({ useHandCursor: true })
+            .on('pointerdown', () => {
+                this.hideTextBox();
+            })
+            .setDepth(101)
+            .setVisible(false);
+
     }
 
     loadCustomMap(mapKey, bgKey) {
@@ -147,9 +199,9 @@ class GameScene extends Phaser.Scene {
     }
 
     updateArrowsVisibility() {
-    this.arrows.left.setVisible(true);
-    this.arrows.right.setVisible(true);
-}
+        this.arrows.left.setVisible(true);
+        this.arrows.right.setVisible(true);
+    }
 
     updateBackground(bgKey) {
         this.bg.setTexture(bgKey);
@@ -174,11 +226,11 @@ class GameScene extends Phaser.Scene {
                 this.roomManager.interactiveZones.push(zone);
 
                 // Debug visual (opcional)
-                const debugRect = this.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height)
-                    .setStrokeStyle(1, 0x00ff00)
-                    .setDepth(99);
+                // const debugRect = this.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height)
+                //     .setStrokeStyle(1, 0x00ff00)
+                //     .setDepth(99);
 
-                this.roomManager.interactiveZones.push(debugRect);
+                // this.roomManager.interactiveZones.push(debugRect);
             });
         });
     }
@@ -197,10 +249,15 @@ class GameScene extends Phaser.Scene {
     }
 
     handleObjectClick(obj) {
+        //         if (obj.name === "caixa pequena") {
+        //     this.loadCustomMap('caixaclara', 'caixaclara');
+        //     this.showTextBox("Você abriu a caixa pequena.");
+        // }
         console.log(`Clicou em: ${obj.name}`);
 
         if (obj.name === "caixa pequena") {
-            this.loadCustomMap('caixaclara', 'caixaclara'); // Ex: mapa POV + fundo opcional
+            this.showTextBoxWithChoices("Nossa.. tantas memórias da Clara por aqui..");
+            return;
         }
 
         if (obj.name === "voltar") {
@@ -217,6 +274,21 @@ class GameScene extends Phaser.Scene {
 
         // Adicione aqui lógica para interação com objetos específicos
     }
+
+    showTextBoxWithChoices(message) {
+        this.textBox.setText(message).setVisible(true);
+        this.textBoxBackground.setVisible(true);
+        this.buttonOpen.setVisible(true);
+        this.buttonClose.setVisible(true);
+    }
+
+    hideTextBox() {
+        this.textBox.setVisible(false);
+        this.textBoxBackground.setVisible(false);
+        this.buttonOpen.setVisible(false);
+        this.buttonClose.setVisible(false);
+    }
+
 }
 
 // Configuração do Phaser
