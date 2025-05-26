@@ -1,1 +1,2 @@
-"CàDIGO PHASER" 
+"Cï¿½DIGO PHASER" 
+python3 -m http.server 8000
